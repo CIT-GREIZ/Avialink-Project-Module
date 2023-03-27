@@ -1,0 +1,32 @@
+{
+  "id": "1760af3b-1fc6-4a5b-a604-d5f74583c377",
+  "name": "Avialink-project-modul",
+  "publisher": "CIT Systems",
+  "version": "1.0.2.8",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "20.0.0.0",
+  "idRanges": [
+    {
+      "from": 50500,
+      "to": 50549
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "9.2",
+  "features": [
+    "NoImplicitWith"
+  ]
+}
