@@ -2,7 +2,7 @@ pageextension 50502 "Job Card Purchase Invoice Ext." extends "Job Card"
 {
     layout
     {
-        addafter("% Invoiced")
+        /*addafter("% Invoiced")
         {
             field("Purchase Invoice Exists"; BoolToText(Rec."Purchase Invoice Exists"))
             {
@@ -22,13 +22,50 @@ pageextension 50502 "Job Card Purchase Invoice Ext." extends "Job Card"
                     end;
                 end;
             }
-        }
+        }*/
     }
 
     actions
     {
-        addafter(Attachments)
+        addafter("Job - Planning Lines")
         {
+
+            action(ShowPurchaseInvoices)
+            {
+                ApplicationArea = All;
+                Caption = 'Einkaufsrechnungen Anzeigen';
+                Promoted = true;
+                PromotedCategory = Category6;
+
+                trigger OnAction()
+                var
+                    TranslationTable: Record "Job Purchase Invoice Relation";
+                begin
+                    TranslationTable.SetRange(JobID, Rec."No.");
+                    Page.Run(Page::"Job-Inv. Relaction", TranslationTable);
+                end;
+            }
+        }
+        addafter("Copy Job Tasks &to...")
+        {
+            action("Create Job &Sales Invoice")
+            {
+                ApplicationArea = Jobs;
+                Caption = 'Projectverkaufsrechnung erstellen';
+                Image = JobSalesInvoice;
+                //RunObject = Report "Job Create Sales Invoice";
+                ToolTip = 'Use a batch job to help you create job sales invoices for the involved job planning lines.';
+                Promoted = true;
+                PromotedCategory = Process;
+
+                trigger OnAction()
+                var
+                    JobTask: Record "Job Task";
+                begin
+                    JobTask.SetRange("Job No.", Rec."No.");
+                    Report.Run(Report::"Job Create Sales Invoice", true, true, JobTask);
+                end;
+            }
 
             action(NewPurchaseInvoice)
             {
@@ -40,22 +77,6 @@ pageextension 50502 "Job Card Purchase Invoice Ext." extends "Job Card"
                 trigger OnAction()
                 begin
                     CreateAndRunNewPurchaseInvoice();
-                end;
-            }
-
-            action(ShowPurchaseInvoices)
-            {
-                ApplicationArea = All;
-                Caption = 'Einkaufsrechnungen Anzeigen';
-                Promoted = true;
-                PromotedCategory = Process;
-
-                trigger OnAction()
-                var
-                    TranslationTable: Record "Job Purchase Invoice Relation";
-                begin
-                    TranslationTable.SetRange(JobID, Rec."No.");
-                    Page.Run(Page::"Job-Inv. Relaction", TranslationTable);
                 end;
             }
         }

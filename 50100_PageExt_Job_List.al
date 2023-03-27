@@ -34,8 +34,56 @@ pageextension 50500 "Job List Purchase Invoice Ext." extends "Job List"
 
     actions
     {
+        addafter("Job Task &Lines")
+        {
+            action(ShowPurchaseInvoices)
+            {
+                ApplicationArea = All;
+                Caption = 'Einkaufsrechnungen anzeigen';
+                Promoted = true;
+                PromotedCategory = Category4;
+
+                trigger OnAction()
+                var
+                    TranslationTable: Record "Job Purchase Invoice Relation";
+                begin
+                    //if Rec.FindFirst() then begin
+                    TranslationTable.SetRange(JobID, Rec."No.");
+                    Page.Run(Page::"Job-Inv. Relaction", TranslationTable);
+                    //end else begin
+                    //    Message(NoProjectSeletetError);
+                    //end;
+                end;
+            }
+        }
+
+        modify("Create Job &Sales Invoice")
+        {
+            Visible = false;
+            Enabled = false;
+        }
+
         addafter(CopyJob)
         {
+            action("Projectverkaufsrechnung Erstellen")
+            {
+                ApplicationArea = Jobs;
+                Caption = 'Projectverkaufsrechnung erstellen';
+                Image = JobSalesInvoice;
+                //RunObject = Report "Job Create Sales Invoice";
+                ToolTip = 'Use a batch job to help you create job sales invoices for the involved job planning lines.';
+                Promoted = true;
+                PromotedCategory = Process;
+
+                trigger OnAction()
+                var
+                    JobTask: Record "Job Task";
+                begin
+                    JobTask.SetRange("Job No.", Rec."No.");
+                    Report.Run(Report::"Job Create Sales Invoice", true, true, JobTask);
+                end;
+            }
+
             action("Create Job Purchase Invoice")
             {
                 ApplicationArea = All;
@@ -51,26 +99,6 @@ pageextension 50500 "Job List Purchase Invoice Ext." extends "Job List"
                     CreateAndRunNewPurchaseInvoice();
                     //end else begin
                     //    Message(NoProjectSeletetError)
-                    //end;
-                end;
-            }
-
-            action(ShowPurchaseInvoices)
-            {
-                ApplicationArea = All;
-                Caption = 'Einkaufsrechnungen anzeigen';
-                Promoted = true;
-                PromotedCategory = Process;
-
-                trigger OnAction()
-                var
-                    TranslationTable: Record "Job Purchase Invoice Relation";
-                begin
-                    //if Rec.FindFirst() then begin
-                    TranslationTable.SetRange(JobID, Rec."No.");
-                    Page.Run(Page::"Job-Inv. Relaction", TranslationTable);
-                    //end else begin
-                    //    Message(NoProjectSeletetError);
                     //end;
                 end;
             }
