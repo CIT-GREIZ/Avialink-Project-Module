@@ -45,6 +45,24 @@ pageextension 50502 "Job Card Purchase Invoice Ext." extends "Job Card"
                     Page.Run(Page::"Job-Inv. Relaction", TranslationTable);
                 end;
             }
+
+            action(SalesInvoicesCreditMemosMoved)
+            {
+                ApplicationArea = Jobs;
+                Caption = 'Sales &Invoices/Credit Memos';
+                Image = GetSourceDoc;
+                ToolTip = 'View sales invoices or sales credit memos that are related to the selected job.';
+                Promoted = true;
+                PromotedCategory = Category6;
+
+                trigger OnAction()
+                var
+                    JobInvoices: Page "Job Invoices";
+                begin
+                    JobInvoices.SetPrJob(Rec);
+                    JobInvoices.RunModal();
+                end;
+            }
         }
         addafter("Copy Job Tasks &to...")
         {
